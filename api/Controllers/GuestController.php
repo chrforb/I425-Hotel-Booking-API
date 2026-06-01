@@ -27,4 +27,10 @@ class GuestController {
         $results = Guest::getGuestById($id);
         return Helper::withJson($response, $results, 200);
     }
+
+    public function viewBookings(Request $request, Response $response, array $args): Response {
+        $id = $args['id'];
+        $results = Guest::getBookingsByGuest($id);
+        return Helper::withJson($response, $results, 200);
+    }
 }
