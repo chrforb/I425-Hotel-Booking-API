@@ -12,4 +12,10 @@ public static function getBookingById(string $id) {
 }
 $group->get('/{id}/amenities', 'Booking:viewAmenities');
 
+// A Booking belongs to one Guest
+public function guest()
+{
+    return $this->belongsTo(Guest::class, 'guest_id');
+}
+
 
