@@ -9,12 +9,19 @@
 use DI\Container;
 use courseProj\Controllers\{GuestController, };
 use courseProj\Models\{Guest, };
+use courseProj\Controllers\RoomController;
+use courseProj\Controllers\BookingController;
 
 return function (Container $container) {
     $container->set('Guest', function () {
         return new GuestController();
     });
-
+    $container->set('Room', function() {
+        return new RoomController();
+    });
+    $container->set('Booking', function() {
+        return new BookingController();
+    });
 //    $container->set('Rooms', function () {
 //        return new Rooms();
 //    });
