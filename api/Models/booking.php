@@ -26,5 +26,27 @@ class Booking extends Model
             'amenity'
         );
     }
+    // Booking belongs to one guest
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class, 'guest_id');
+    }
+
+    // retrieve all bookings
+    public static function getBookings()
+    {
+        $bookings = self::with(['amenities', 'guest'])->get();
+        return $bookings;
+    }
+
+    // retrieve specific booking
+    public static function getBookingById(int $id)
+    {
+        $booking = self::findOrFail($id);
+        $booking->load('amenities')
+                ->load('guest');
+
+        return $booking;
+    }
 
 
