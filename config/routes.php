@@ -31,7 +31,15 @@ return function (App $app) {
             $group->get('', 'Guest:index');
             $group->get('/{id}', 'Guest:view');
         });
+        
+        $group->group('/rooms', function (RouteCollectorProxy $group) {
+            $group->get('', 'Room:index');
+            $group->get('/{id}', 'Room:view');
+        });
 
-    });
+        $group->group('/bookings', function (RouteCollectorProxy $group) {
+            $group->get('', 'Booking:index');
+            $group->get('/{id}', 'Booking:view');
+        });
 
-};
+    };
