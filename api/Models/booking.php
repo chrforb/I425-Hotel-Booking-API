@@ -1,21 +1,19 @@
-public function amenities() {
-    return $this->belongsToMany(Amenity::class, 'booking_amenity', 'booking', 'amenity');
-}
-public static function getBookings() {
-    $bookings = self::with('amenities')->get();
-    return $bookings;
-}
-public static function getBookingById(string $id) {
-    $booking = self::findOrFail($id);
-    $booking->load('amenities');
-    return $booking;
-}
-$group->get('/{id}/amenities', 'Booking:viewAmenities');
+namespace courseProj\Models;
 
-// A Booking belongs to one Guest
-public function guest()
+use Illuminate\Database\Eloquent\Model;
+
+class Booking extends Model
 {
-    return $this->belongsTo(Guest::class, 'guest_id');
-}
+    // table associated with model
+    protected $table = 'bookings';
+
+    // primary key of the table
+    protected $primaryKey = 'booking_id';
+
+    // if PK is auto incrementing
+    public $incrementing = true;
+
+    // if created_at and updated_at are not used
+    public $timestamps = false;
 
 
