@@ -48,5 +48,11 @@ class Booking extends Model
 
         return $booking;
     }
+   // retrieve amenities for a booking
+    public static function getAmenitiesByBooking(int $id)
+    {
+        return self::findOrFail($id)->amenities;
+    }
+}
 
 
