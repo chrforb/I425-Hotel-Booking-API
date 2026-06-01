@@ -33,6 +33,11 @@ class Guest extends Model
     // if created_at and updated_at are not used
     public $timestamps = false;
 
+     public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'guest_id');
+    }
+
     // retrieve all guests
     public static function getGuests()
     {
@@ -44,6 +49,13 @@ class Guest extends Model
     public static function getGuestById(int $id)
     {
         $guest = self::findOrFail($id);
+        $guest->load('bookings');
         return $guest;
+    }
+
+     public static function getBookingsByGuest(int $id)
+    {
+        $bookings = self::findOrFail($id)->bookings;
+        return $bookings;
     }
 }
