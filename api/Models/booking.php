@@ -10,3 +10,6 @@ public static function getBookingById(string $id) {
     $booking->load('amenities');
     return $booking;
 }
+$group->get('/{id}/amenities', 'Booking:viewAmenities');
+
+
