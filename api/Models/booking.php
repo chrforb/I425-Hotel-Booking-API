@@ -16,4 +16,15 @@ class Booking extends Model
     // if created_at and updated_at are not used
     public $timestamps = false;
 
+ // Many-to-many relationship with amenities
+    public function amenities()
+    {
+        return $this->belongsToMany(
+            Amenity::class,
+            'booking_amenity',
+            'booking',
+            'amenity'
+        );
+    }
+
 
