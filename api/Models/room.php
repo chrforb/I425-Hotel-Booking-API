@@ -26,4 +26,5 @@ class Room extends Model
         $room = self::findOrFail($id);
         $room->delete();
         return $room;
+    }
 }
