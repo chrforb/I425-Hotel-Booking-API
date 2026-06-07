@@ -21,4 +21,10 @@ class RoomController
         $results = Room::getRoomById($id);
         return Helper::withJson($response, $results, 200);
     }
+
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        $results = Room::deleteRoom($args['id']);
+        return Helper::withJson($response, $results, 200);
+    }
 }
