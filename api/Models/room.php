@@ -27,4 +27,5 @@ class Room extends Model
         $room->delete();
         return $room;
     }
+    $group->delete('/{id}', 'Room:delete');
 }
