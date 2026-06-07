@@ -20,4 +20,10 @@ class Room extends Model
     {
         return self::findOrFail($id);
     }
+
+    public static function deleteRoom(int $id)
+    {
+        $room = self::findOrFail($id);
+        $room->delete();
+        return $room;
 }
