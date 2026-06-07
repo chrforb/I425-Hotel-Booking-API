@@ -8,9 +8,11 @@
 
 use DI\Container;
 use courseProj\Controllers\{GuestController, };
-use courseProj\Models\{Guest, };
+use courseProj\Models\{Guest, Amenity, Booking, Hotel, Room};
 use courseProj\Controllers\RoomController;
 use courseProj\Controllers\BookingController;
+use courseProj\Controllers\AmenityController;
+use courseProj\Controllers\HotelController;
 
 return function (Container $container) {
     $container->set('Guest', function () {
@@ -26,17 +28,17 @@ return function (Container $container) {
 //        return new Rooms();
 //    });
 //
-//    $container->set('Amenities', function () {
-//        return new Amenities();
-//    });
+   $container->set('Amenity', function () {
+        return new AmenityController();
+    });
 //
 //    $container->set('Bookings', function () {
 //        return new Bookings();
 //    });
 //
-//    $container->set('Hotels', function () {
-//        return new Hotels();
-//    });
+    $container->set('Hotel', function () {
+        return new HotelController();
+   });
 //
 //    $container->set('BookingAmenities', function () {
 //        return new BookingAmenities();

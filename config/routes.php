@@ -30,16 +30,32 @@ return function (App $app) {
         $group->group('/guests', function (RouteCollectorProxy $group) {
             $group->get('', 'Guest:index');
             $group->get('/{id}', 'Guest:view');
+            $group->get('/{id}/bookings', 'Guest:viewBookings'); // inside guests
         });
         
         $group->group('/rooms', function (RouteCollectorProxy $group) {
             $group->get('', 'Room:index');
             $group->get('/{id}', 'Room:view');
+            $group->get('/{id}/bookings', 'Room:viewBookings');  // inside rooms
         });
 
         $group->group('/bookings', function (RouteCollectorProxy $group) {
             $group->get('', 'Booking:index');
             $group->get('/{id}', 'Booking:view');
+            $group->get('/{id}/amenities', 'Booking:viewAmenities'); // inside bookings
         });
 
-    };
+        $group->group('/hotels', function (RouteCollectorProxy $group) {
+            $group->get('', 'Hotel:index');
+            $group->get('/{id}', 'Hotel:view');
+            $group->get('/{id}/rooms', 'Hotel:viewRooms');
+        });
+
+        $group->group('/amenities', function (RouteCollectorProxy $group) {
+            $group->get('', 'Amenity:index');
+            $group->get('/{id}', 'Amenity:view');
+            $group->get('/{id}/bookings', 'Amenity:viewBookings');
+        });
+
+    });
+};

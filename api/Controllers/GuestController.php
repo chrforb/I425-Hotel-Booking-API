@@ -16,8 +16,10 @@ use courseProj\Controllers\ControllerHelper as Helper;
 class GuestController {
 
     // retrieve all guests
-    public function index(Request $request, Response $response, array $args) {
-        $results = Guest::getGuests();
+    public function index(Request $request, Response $response, array $args)
+    {
+        $results = Guest::getGuests($request);
+
         return Helper::withJson($response, $results, 200);
     }
 
