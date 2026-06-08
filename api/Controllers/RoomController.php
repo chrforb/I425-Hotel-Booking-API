@@ -27,4 +27,15 @@ class RoomController
         $results = Room::deleteRoom($args['id']);
         return Helper::withJson($response, $results, 200);
     }
+
+    public function search(Request $request, Response $response, array $args): Response
+    {
+        $params = $request->getQueryParams();
+
+        $terms = $params['terms'] ?? '';
+
+        $results = Room::searchRooms($terms);
+
+        return Helper::withJson($response, $results, 200);
+    }
 }
