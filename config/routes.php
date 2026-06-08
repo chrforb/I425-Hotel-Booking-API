@@ -30,19 +30,23 @@ return function (App $app) {
         $group->group('/guests', function (RouteCollectorProxy $group) {
             $group->get('', 'Guest:index');
             $group->get('/{id}', 'Guest:view');
-            $group->get('/{id}/bookings', 'Guest:viewBookings'); // inside guests
+            $group->get('/{id}/bookings', 'Guest:viewBookings');
+            $group->post('', 'Guest:create');
+            $group->put('/{id}', 'Guest:update');
         });
         
         $group->group('/rooms', function (RouteCollectorProxy $group) {
             $group->get('', 'Room:index');
             $group->get('/{id}', 'Room:view');
-            $group->get('/{id}/bookings', 'Room:viewBookings');  // inside rooms
+            $group->get('/{id}/bookings', 'Room:viewBookings');
+            $group->post('', 'Room:create');
+            $group->put('/{id}', 'Room:update');
         });
 
         $group->group('/bookings', function (RouteCollectorProxy $group) {
             $group->get('', 'Booking:index');
             $group->get('/{id}', 'Booking:view');
-            $group->get('/{id}/amenities', 'Booking:viewAmenities'); // inside bookings
+            $group->get('/{id}/amenities', 'Booking:viewAmenities');
         });
 
         $group->group('/hotels', function (RouteCollectorProxy $group) {

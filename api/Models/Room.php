@@ -85,4 +85,34 @@ class Room extends Model
     {
         return self::findOrFail($id)->bookings;
     }
+
+    public static function createRoom($request)
+    {
+        $params = $request->getParsedBody();
+
+        $room = new Room();
+
+        foreach ($params as $field => $value) {
+            $room->$field = $value;
+        }
+
+        $room->save();
+        return $room;
+    }
+
+    public static function updateRoom($request)
+    {
+        $params = $request->getParsedBody();
+
+        $id = $request->getAttribute('id');
+
+        $room = self::findOrFail($id);
+
+        foreach ($params as $field => $value) {
+            $room->$field = $value;
+        }
+
+        $room->save();
+        return $room;
+    }
 }

@@ -108,4 +108,34 @@ class Guest extends Model
         $bookings = self::findOrFail($id)->bookings;
         return $bookings;
     }
+
+    public static function createGuest($request)
+    {
+        $params = $request->getParsedBody();
+
+        $guest = new Guest();
+
+        foreach ($params as $field => $value) {
+            $guest->$field = $value;
+        }
+
+        $guest->save();
+        return $guest;
+    }
+
+    public static function updateGuest($request)
+    {
+        $params = $request->getParsedBody();
+
+        $id = $request->getAttribute('id');
+
+        $guest = self::findOrFail($id);
+
+        foreach ($params as $field => $value) {
+            $guest->$field = $value;
+        }
+
+        $guest->save();
+        return $guest;
+    }
 }
