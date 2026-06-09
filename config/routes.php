@@ -41,5 +41,5 @@ return function (App $app) {
             $group->get('', 'Booking:index');
             $group->get('/{id}', 'Booking:view');
         });
-
+   $group->group('/guests', function (RouteCollectorProxy $group) { $group->get('', 'Guest:index'); $group->get('/{id}', 'Guest:view'); 
     };
