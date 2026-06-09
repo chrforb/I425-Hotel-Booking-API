@@ -53,6 +53,17 @@ class Booking extends Model
     {
         return self::findOrFail($id)->amenities;
     }
+    public static function search($keywords)
+{
+    $query = self::query();
+
+    foreach ($keywords as $keyword) {
+        $query->orWhere('checkin_date', 'LIKE', "%$keyword%")
+              ->orWhere('checkout_date', 'LIKE', "%$keyword%");
+    }
+
+    return $query->get();
+}
 }
 
 
