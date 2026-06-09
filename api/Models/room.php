@@ -29,17 +29,14 @@ class Room extends Model
     }
     $group->delete('/{id}', 'Room:delete');
 
-    public static function searchRooms(string $terms)
+  public static function search($keywords)
     {
-    $keywords = explode(' ', trim($terms));
+        $query = self::query();
 
-    $query = self::query();
-
-    foreach ($keywords as $keyword) {
-        $query->orWhere('room_number', 'LIKE', "%$keyword%")
-              ->orWhere('room_type', 'LIKE', "%$keyword%")
-              ->orWhere('description', 'LIKE', "%$keyword%");
-        }
+        foreach ($keywords as $keyword) {
+            $query->orWhere('type', 'LIKE', "%$keyword%")
+              ->orWhere('number', 'LIKE', "%$keyword%");
+    }
 
     return $query->get();
     }
