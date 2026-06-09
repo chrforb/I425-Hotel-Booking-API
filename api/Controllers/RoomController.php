@@ -22,20 +22,31 @@ class RoomController
         return Helper::withJson($response, $results, 200);
     }
 
-    public function delete(Request $request, Response $response, array $args): Response
-    {
-        $results = Room::deleteRoom($args['id']);
-        return Helper::withJson($response, $results, 200);
+     public function delete($request, $response, $args)
+{
+        $room = Room::find($args['id']);
+
+        if (!$room) {
+            return $response->withJson([
+                "message" => "Room not found"
+            ], 404);
+        }
+
+        $room->delete();
+
+        return $response->withJson([
+            "message" => "Room deleted successfully"
+        ], 200);
     }
 
-    public function search(Request $request, Response $response, array $args): Response
+    public function search($request, $response, $args)
     {
-        $params = $request->getQueryParams();
+        $search = $request->getQueryParam('search');
 
-        $terms = $params['terms'] ?? '';
+        $keywords = explode(' ', $search);
 
-        $results = Room::searchRooms($terms);
+        $rooms = Room::search($keywords);
 
-        return Helper::withJson($response, $results, 200);
+        return $response->withJson($rooms, 200);
     }
 }
