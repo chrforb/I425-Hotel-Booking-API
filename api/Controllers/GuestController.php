@@ -33,4 +33,30 @@ class GuestController {
         $results = Guest::getBookingsByGuest($id);
         return Helper::withJson($response, $results, 200);
     }
+    public function delete($request, $response, $args)
+    {
+        $guest = Guest::find($args['id']);
+
+        if (!$guest) {
+            return $response->withJson([
+                "message" => "Guest not found"
+            ], 404);
+        }
+
+        $guest->delete();
+
+        return $response->withJson([
+            "message" => "Guest deleted successfully"
+        ], 200);
+    }
+    public function search($request, $response, $args)
+    {
+        $search = $request->getQueryParam('search');
+
+        $keywords = explode(' ', $search);
+
+        $guests = Guest::search($keywords);
+
+        return $response->withJson($guests, 200);
+    }
 }
