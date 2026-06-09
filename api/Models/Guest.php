@@ -58,4 +58,18 @@ class Guest extends Model
         $bookings = self::findOrFail($id)->bookings;
         return $bookings;
     }
+    
+    public static function search($keywords)
+    {
+    $query = self::query();
+
+    foreach ($keywords as $keyword) {
+        $query->orWhere('firstname', 'LIKE', "%$keyword%")
+              ->orWhere('lastname', 'LIKE', "%$keyword%")
+              ->orWhere('email', 'LIKE', "%$keyword%");
+    }
+
+    return $query->get();
+    }
+
 }
