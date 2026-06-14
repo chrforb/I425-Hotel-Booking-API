@@ -5,8 +5,8 @@
       <paths name="cloudCourseProj">
         <serverdata>
           <mappings>
-            <mapping deploy="I425/courseProj" local="$PROJECT_DIR$" web="/" />
-            <mapping deploy="I425/courseProj" local="$USER_HOME$/OneDrive/I425/courseProj" web="/" />
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$USER_HOME$/OneDrive/I425/courseProj" web="/" />
           </mappings>
         </serverdata>
       </paths>
