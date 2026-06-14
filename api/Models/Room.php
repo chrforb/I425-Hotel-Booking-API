@@ -31,6 +31,21 @@ class Room extends Model
 
         $query = self::query();
 
+        if (array_key_exists('search', $params)) {
+            $terms = explode(' ', trim($params['search']));
+
+            foreach ($terms as $term) {
+                $query->where(function ($q) use ($term) {
+                    $q->where('room_number', 'like', "%$term%")
+                        ->orWhere('room_type', 'like', "%$term%")
+                        ->orWhere('status', 'like', "%$term%")
+                        ->orWhere('price_per_night', 'like', "%$term%");
+                });
+            }
+        }
+
+        $count = $query->count();
+
         $query = $query->skip($offset)->take($limit);
 
         $sort_key_array = self::getSortKeys($request);
@@ -113,6 +128,15 @@ class Room extends Model
         }
 
         $room->save();
+        return $room;
+    }
+
+    public static function deleteRoom($request)
+    {
+        $id = $request->getAttribute('id');
+        $room = self::findOrFail($id);
+        $room->delete();
+
         return $room;
     }
 }

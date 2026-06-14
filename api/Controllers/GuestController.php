@@ -80,4 +80,16 @@ class GuestController {
 
         return Helper::withJson($response, $results, 200);
     }
+
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        $guest = Guest::deleteGuest($request);
+
+        $results = [
+            'status' => 'Guest has been deleted.',
+            'data' => $guest
+        ];
+
+        return Helper::withJson($response, $results, 200);
+    }
 }

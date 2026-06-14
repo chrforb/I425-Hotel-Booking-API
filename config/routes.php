@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
+use courseProj\Authentication\JWTAuthenticator;
 
 return function (App $app) {
 
@@ -33,6 +34,7 @@ return function (App $app) {
             $group->get('/{id}/bookings', 'Guest:viewBookings');
             $group->post('', 'Guest:create');
             $group->put('/{id}', 'Guest:update');
+            $group->delete('/{id}', 'Guest:delete');
         });
         
         $group->group('/rooms', function (RouteCollectorProxy $group) {
@@ -41,6 +43,7 @@ return function (App $app) {
             $group->get('/{id}/bookings', 'Room:viewBookings');
             $group->post('', 'Room:create');
             $group->put('/{id}', 'Room:update');
+            $group->delete('/{id}', 'Room:delete');
         });
 
         $group->group('/bookings', function (RouteCollectorProxy $group) {
@@ -60,6 +63,16 @@ return function (App $app) {
             $group->get('/{id}', 'Amenity:view');
             $group->get('/{id}/bookings', 'Amenity:viewBookings');
         });
+
+        $group->group('/users', function (RouteCollectorProxy $group) {
+            $group->post('', 'User:create');
+            $group->post('/authJWT', 'User:authJWT');
+            $group->post('/validateJWT', 'User:validateJWT');
+        });
+
+        $group->group('/jwt-protected', function (RouteCollectorProxy $group) {
+            $group->get('/guests', 'Guest:index');
+        })->add(new JWTAuthenticator());
 
     });
 };

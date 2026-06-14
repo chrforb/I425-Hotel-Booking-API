@@ -73,4 +73,16 @@ class RoomController
 
         return Helper::withJson($response, $results, 200);
     }
+
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        $room = Room::deleteRoom($request);
+
+        $results = [
+            'status' => 'Room has been deleted.',
+            'data' => $room
+        ];
+
+        return Helper::withJson($response, $results, 200);
+    }
 }

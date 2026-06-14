@@ -50,6 +50,21 @@ class Guest extends Model
 
         $query = self::query();
 
+        if (array_key_exists('search', $params)) {
+            $terms = explode(' ', trim($params['search']));
+
+            foreach ($terms as $term) {
+                $query->where(function ($q) use ($term) {
+                    $q->where('first_name', 'like', "%$term%")
+                        ->orWhere('last_name', 'like', "%$term%")
+                        ->orWhere('email', 'like', "%$term%")
+                        ->orWhere('phone', 'like', "%$term%");
+                });
+            }
+        }
+
+        $count = $query->count();
+
         $query = $query->skip($offset)->take($limit);
 
         $sort_key_array = self::getSortKeys($request);
@@ -136,6 +151,15 @@ class Guest extends Model
         }
 
         $guest->save();
+        return $guest;
+    }
+
+    public static function deleteGuest($request)
+    {
+        $id = $request->getAttribute('id');
+        $guest = self::findOrFail($id);
+        $guest->delete();
+
         return $guest;
     }
 }
