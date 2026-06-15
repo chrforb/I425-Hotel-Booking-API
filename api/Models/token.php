@@ -1,6 +1,6 @@
 <?php 
 
-namespace I425-Hotel-Booking-API/api/Models;
+namespace courseProj\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Token extends Model
