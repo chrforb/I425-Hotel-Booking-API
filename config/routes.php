@@ -11,6 +11,11 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
+ use courseProj\Authentication\{
+        MyAuthenticator,
+        BasicAuthenticator
+    };
+
 return function (App $app) {
 
     // define app route
@@ -43,17 +48,6 @@ return function (App $app) {
         });
    $group->group('/guests', function (RouteCollectorProxy $group) { $group->get('', 'Guest:index'); $group->get('/{id}', 'Guest:view'); 
     };
-
-    use courseProj\Authentication\{
-        MyAuthenticator,
-        BasicAuthenticator
-    };
-
         $app->group('/api/v1', function(RouteCollectorProxy $group) {
 
-    // guests
-    // rooms
-    // bookings
-    // amenities
-
-})->add(new BasicAuthenticator());
+        })->add(new BasicAuthenticator());
