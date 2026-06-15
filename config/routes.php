@@ -13,7 +13,8 @@ use Slim\Routing\RouteCollectorProxy;
 
  use courseProj\Authentication\{
         MyAuthenticator,
-        BasicAuthenticator
+        BasicAuthenticator,
+        BearerAuthenticator
     };
 
 return function (App $app) {
@@ -51,3 +52,4 @@ return function (App $app) {
         $app->group('/api/v1', function(RouteCollectorProxy $group) {
 
         })->add(new BasicAuthenticator());
+        })->add(new BearerAuthenticator());
