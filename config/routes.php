@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
-use courseProj\Authentication\JWTAuthenticator;
+use courseProj\Authentication\{JWTAuthenticator, MyAuthenticator, BasicAuthenticator, BearerAuthenticator};
 
 return function (App $app) {
 
@@ -68,11 +68,25 @@ return function (App $app) {
             $group->post('', 'User:create');
             $group->post('/authJWT', 'User:authJWT');
             $group->post('/validateJWT', 'User:validateJWT');
+            $group->post('/authBearer', 'User:authBearer');
         });
 
         $group->group('/jwt-protected', function (RouteCollectorProxy $group) {
             $group->get('/guests', 'Guest:index');
         })->add(new JWTAuthenticator());
 
+        $group->group('/custom-protected', function ($group) {
+            $group->get('/guests', 'Guest:index');
+        })->add(new MyAuthenticator());
+
+        $group->group('/basic-protected', function ($group) {
+            $group->get('/guests', 'Guest:index');
+        })->add(new BasicAuthenticator());
+
+        $group->group('/bearer-protected', function ($group) {
+            $group->get('/guests', 'Guest:index');
+        })->add(new BearerAuthenticator());
+
     });
+
 };
