@@ -1,10 +1,14 @@
 <?php
-/**
- * Author: Christian Forbes
- * Date: 5/31/2026
- * File: index.php
- * Description: application home page
- */
-// require the app bootstrap
 
-(require __DIR__ . '/../config/bootstrap.php')->run();
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit();
+}
+
+$app = require __DIR__ . '/../config/bootstrap.php';
+
+$app->run();

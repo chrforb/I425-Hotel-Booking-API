@@ -12,12 +12,15 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use courseProj\Models\Guest;
 use courseProj\Controllers\ControllerHelper as Helper;
+use courseProj\Validation\Validator;
 
 class GuestController {
 
     // retrieve all guests
-    public function index(Request $request, Response $response, array $args) {
-        $results = Guest::getGuests();
+    public function index(Request $request, Response $response, array $args)
+    {
+        $results = Guest::getGuests($request);
+
         return Helper::withJson($response, $results, 200);
     }
 
@@ -33,30 +36,60 @@ class GuestController {
         $results = Guest::getBookingsByGuest($id);
         return Helper::withJson($response, $results, 200);
     }
-    public function delete($request, $response, $args)
-    {
-        $guest = Guest::find($args['id']);
 
-        if (!$guest) {
-            return $response->withJson([
-                "message" => "Guest not found"
-            ], 404);
+    public function create(Request $request, Response $response, array $args): Response
+    {
+        $validation = Validator::validateGuest($request);
+
+        if (!$validation) {
+            $results = [
+                'status' => 'Validation failed',
+                'errors' => Validator::getErrors()
+            ];
+            return Helper::withJson($response, $results, 500);
         }
 
-        $guest->delete();
+        $guest = Guest::createGuest($request);
 
-        return $response->withJson([
-            "message" => "Guest deleted successfully"
-        ], 200);
+        $results = [
+            'status' => 'Guest has been created.',
+            'data' => $guest
+        ];
+
+        return Helper::withJson($response, $results, 200);
     }
-    public function search($request, $response, $args)
+
+    public function update(Request $request, Response $response, array $args): Response
     {
-        $search = $request->getQueryParam('search');
+        $validation = Validator::validateGuest($request);
 
-        $keywords = explode(' ', $search);
+        if (!$validation) {
+            $results = [
+                'status' => 'Validation failed',
+                'errors' => Validator::getErrors()
+            ];
+            return Helper::withJson($response, $results, 500);
+        }
 
-        $guests = Guest::search($keywords);
+        $guest = Guest::updateGuest($request);
 
-        return $response->withJson($guests, 200);
+        $results = [
+            'status' => 'Guest has been updated.',
+            'data' => $guest
+        ];
+
+        return Helper::withJson($response, $results, 200);
+    }
+
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        $guest = Guest::deleteGuest($request);
+
+        $results = [
+            'status' => 'Guest has been deleted.',
+            'data' => $guest
+        ];
+
+        return Helper::withJson($response, $results, 200);
     }
 }

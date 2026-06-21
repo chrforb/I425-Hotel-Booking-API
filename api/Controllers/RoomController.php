@@ -6,12 +6,12 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use courseProj\Models\Room;
 use courseProj\Controllers\ControllerHelper as Helper;
+use courseProj\Validation\Validator;
 
 class RoomController
 {
-    public function index(Request $request, Response $response, array $args): Response
-    {
-        $results = Room::getRooms();
+    public function index(Request $request, Response $response, array $args) {
+        $results = Room::getRooms($request);
         return Helper::withJson($response, $results, 200);
     }
 
@@ -22,31 +22,67 @@ class RoomController
         return Helper::withJson($response, $results, 200);
     }
 
-     public function delete($request, $response, $args)
-{
-        $room = Room::find($args['id']);
+    public function viewBookings(Request $request, Response $response, array $args): Response {
+        $id = (int)$args['id'];
 
-        if (!$room) {
-            return $response->withJson([
-                "message" => "Room not found"
-            ], 404);
-        }
+        $results = Room::getBookingsByRoom($id);
 
-        $room->delete();
-
-        return $response->withJson([
-            "message" => "Room deleted successfully"
-        ], 200);
+        return Helper::withJson($response, $results, 200);
     }
 
-    public function search($request, $response, $args)
+    public function create(Request $request, Response $response, array $args): Response
     {
-        $search = $request->getQueryParam('search');
+        $validation = Validator::validateRoom($request);
 
-        $keywords = explode(' ', $search);
+        if (!$validation) {
+            $results = [
+                'status' => 'Validation failed',
+                'errors' => Validator::getErrors()
+            ];
+            return Helper::withJson($response, $results, 500);
+        }
 
-        $rooms = Room::search($keywords);
+        $room = Room::createRoom($request);
 
-        return $response->withJson($rooms, 200);
+        $results = [
+            'status' => 'Room has been created.',
+            'data' => $room
+        ];
+
+        return Helper::withJson($response, $results, 200);
+    }
+
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        $validation = Validator::validateRoom($request);
+
+        if (!$validation) {
+            $results = [
+                'status' => 'Validation failed',
+                'errors' => Validator::getErrors()
+            ];
+            return Helper::withJson($response, $results, 500);
+        }
+
+        $room = Room::updateRoom($request);
+
+        $results = [
+            'status' => 'Room has been updated.',
+            'data' => $room
+        ];
+
+        return Helper::withJson($response, $results, 200);
+    }
+
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        $room = Room::deleteRoom($request);
+
+        $results = [
+            'status' => 'Room has been deleted.',
+            'data' => $room
+        ];
+
+        return Helper::withJson($response, $results, 200);
     }
 }

@@ -1,36 +1,30 @@
-<?php 
-
+<?php
 namespace courseProj\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Token extends Model
-  {
+{
     protected $table = 'tokens';
-    protected $primarykey = 'id';
+    protected $primaryKey = 'token_id';
     public $timestamps = false;
 
-    const EXPIRE = 3600;
+    protected $fillable = ['user_id', 'token'];
 
-    public statix function generateBearer(int $user_id)
-    { 
-      $token = bin2hex(random_bytes(16));
-      $bearer = new Token();
+    public static function generateBearer(int $user_id)
+    {
+        $token = bin2hex(random_bytes(32));
 
-      $bearer->user_id = $user_id;
-      $bearer->token = $token;
-      $bearer->expires = time() + self::EXPIRE;
+        self::create([
+            'user_id' => $user_id,
+            'token' => $token
+        ]);
 
-      $bearer->save();
-
-      return $token;
-
+        return $token;
     }
 
     public static function validateBearer(string $token)
     {
-      $bearer = self::where('token', $token)
-        ->where('expires', '>', time())
-        ->first();
-      return $bearer;
+        return self::where('token', $token)->exists();
     }
-  }
+}

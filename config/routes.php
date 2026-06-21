@@ -1,18 +1,19 @@
 <?php
 /**
- * Author: Christian Forbes and Course Project Team
- * Date: 6/15/2026
+ * Author: Christian Forbes
+ * Date: 5/31/2026
  * File: routes.php
- * Description: Defines application routes.
+ * Description: defines application routes
  */
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
-use courseProj\Authentication\MyAuthenticator;
+use courseProj\Authentication\{JWTAuthenticator, MyAuthenticator, BasicAuthenticator, BearerAuthenticator};
 
 return function (App $app) {
+
     $app->get('/', function (Request $request, Response $response, array $args) {
         $response->getBody()->write('Welcome to CourseProj Hotel Booking API!');
         return $response;
@@ -24,28 +25,56 @@ return function (App $app) {
     });
 
     $app->group('/api/v1/users', function (RouteCollectorProxy $group) {
-        $group->get('', 'User:index');
-        $group->get('/{id}', 'User:view');
         $group->post('', 'User:create');
-        $group->put('/{id}', 'User:update');
-        $group->delete('/{id}', 'User:delete');
+        $group->post('/authJWT', 'User:authJWT');
+        $group->post('/validateJWT', 'User:validateJWT');
+        $group->post('/authBearer', 'User:authBearer');
     });
 
     $app->group('/api/v1', function (RouteCollectorProxy $group) {
+
         $group->group('/guests', function (RouteCollectorProxy $group) {
             $group->get('', 'Guest:index');
             $group->get('/{id}', 'Guest:view');
             $group->get('/{id}/bookings', 'Guest:viewBookings');
+            $group->post('', 'Guest:create');
+            $group->put('/{id}', 'Guest:update');
+            $group->delete('/{id}', 'Guest:delete');
         });
 
         $group->group('/rooms', function (RouteCollectorProxy $group) {
             $group->get('', 'Room:index');
             $group->get('/{id}', 'Room:view');
+            $group->get('/{id}/bookings', 'Room:viewBookings');
+            $group->post('', 'Room:create');
+            $group->put('/{id}', 'Room:update');
+            $group->delete('/{id}', 'Room:delete');
         });
 
         $group->group('/bookings', function (RouteCollectorProxy $group) {
             $group->get('', 'Booking:index');
             $group->get('/{id}', 'Booking:view');
+            $group->get('/{id}/amenities', 'Booking:viewAmenities');
         });
-    })->add(new MyAuthenticator());
+
+        $group->group('/hotels', function (RouteCollectorProxy $group) {
+            $group->get('', 'Hotel:index');
+            $group->get('/{id}', 'Hotel:view');
+            $group->get('/{id}/rooms', 'Hotel:viewRooms');
+        });
+
+        $group->group('/amenities', function (RouteCollectorProxy $group) {
+            $group->get('', 'Amenity:index');
+            $group->get('/{id}', 'Amenity:view');
+            $group->get('/{id}/bookings', 'Amenity:viewBookings');
+        });
+
+        // Change the authenticator below for each Lab 4 test.
+        // Only ONE of these should be active at a time.
+
+    //})->add(new MyAuthenticator());       // Custom header authentication
+    //})->add(new BasicAuthenticator()); // Basic authentication
+    //})->add(new BearerAuthenticator()); // Bearer token authentication
+    })->add(new JWTAuthenticator());   // JWT authentication
+
 };

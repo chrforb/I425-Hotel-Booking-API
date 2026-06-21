@@ -19,7 +19,7 @@ class MyAuthenticator
     {
         if (!$request->hasHeader('HotelBooking-Authorization')) {
             return AuthenticationHelper::withJson(
-                ['Status' => 'HotelBooking-Authorization header not found.'],
+               ['Status' => 'HotelBooking-Authorization header not found.'],
                 401
             );
         }

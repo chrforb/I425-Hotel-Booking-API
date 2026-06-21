@@ -1,4 +1,4 @@
-
+<?php
 namespace courseProj\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -19,9 +19,9 @@ class Amenity extends Model
     {
         return $this->belongsToMany(
             Booking::class,
-            'booking_amenity',
-            'amenity',
-            'booking'
+            'booking_amenities',
+            'amenity_id',
+            'booking_id'
         );
     }
 
@@ -32,11 +32,16 @@ class Amenity extends Model
     }
 
     // retrieve single amenity
-    public static function getAmenityById(string $id)
+    public static function getAmenityById(string $amenity_id)
     {
-        $amenity = self::findOrFail($id);
+        $amenity = self::findOrFail($amenity_id);
         $amenity->load('bookings');
 
         return $amenity;
+    }
+
+    public static function getBookingsByAmenity(int $id)
+    {
+        return self::findOrFail($id)->bookings;
     }
 }

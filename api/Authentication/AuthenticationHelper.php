@@ -1,10 +1,11 @@
 <?php
 /**
- * Author: Course Project Team
- * Date: 6/15/2026
+ * Author: Christian Forbes
+ * Date: 6/14/2026
  * File: AuthenticationHelper.php
- * Description: Helper class for authentication JSON responses.
+ * Description: defines the authentication helper class
  */
+
 
 namespace courseProj\Authentication;
 
@@ -15,7 +16,11 @@ class AuthenticationHelper
     public static function withJson($data, int $code): Response
     {
         $response = new Response();
-        $response->getBody()->write(json_encode($data));
+
+        $response->getBody()->write(
+            json_encode($data)
+        );
+
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus($code);

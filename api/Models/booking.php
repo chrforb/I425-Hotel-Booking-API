@@ -1,3 +1,5 @@
+<?php
+
 namespace courseProj\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -21,11 +23,17 @@ class Booking extends Model
     {
         return $this->belongsToMany(
             Amenity::class,
-            'booking_amenity',
-            'booking',
-            'amenity'
+            'booking_amenities',
+            'booking_id',
+            'amenity_id'
         );
     }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id');
+    }
+
     // Booking belongs to one guest
     public function guest()
     {
@@ -35,7 +43,7 @@ class Booking extends Model
     // retrieve all bookings
     public static function getBookings()
     {
-        $bookings = self::with(['amenities', 'guest'])->get();
+        $bookings = self::with(['guest', 'room', 'amenities'])->get();
         return $bookings;
     }
 
@@ -53,17 +61,6 @@ class Booking extends Model
     {
         return self::findOrFail($id)->amenities;
     }
-    public static function search($keywords)
-{
-    $query = self::query();
-
-    foreach ($keywords as $keyword) {
-        $query->orWhere('checkin_date', 'LIKE', "%$keyword%")
-              ->orWhere('checkout_date', 'LIKE', "%$keyword%");
-    }
-
-    return $query->get();
-}
 }
 
 

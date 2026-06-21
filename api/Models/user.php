@@ -2,13 +2,15 @@
 /**
  * Author: Course Project Team
  * Date: 6/15/2026
- * File: user.php
- * Description: Define the User model class.
+ * File: User.php
+ * Description: Defines the User model class and authentication helper methods.
  */
 
 namespace courseProj\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class User extends Model
 {
@@ -16,42 +18,58 @@ class User extends Model
     protected $primaryKey = 'id';
     public $incrementing = true;
     protected $keyType = 'int';
-    public $timestamps = true;
 
-    protected $hidden = ['password'];
+    protected $fillable = [
+        'name',
+        'email',
+        'username',
+        'password',
+        'role'
+    ];
+
+    protected $hidden = [
+        'password'
+    ];
 
     public static function getUsers()
     {
-        return self::with('role')->get();
+        return self::all();
     }
 
     public static function getUserById(int $id)
     {
-        return self::with('role')->findOrFail($id);
+        return self::findOrFail($id);
     }
 
     public static function createUser($request)
     {
-        $params = $request->getParsedBody();
+        $params = $request->getParsedBody() ?? [];
 
-        $user = new User();
-        $user->name = $params['name'];
-        $user->email = $params['email'];
-        $user->username = $params['username'];
-        $user->password = password_hash($params['password'], PASSWORD_DEFAULT);
-        $user->role_id = $params['role_id'] ?? 2;
+        $user = new self();
+        $user->name = $params['name'] ?? '';
+        $user->email = $params['email'] ?? '';
+        $user->username = $params['username'] ?? '';
+
+        if (!empty($params['password'])) {
+            $user->password = password_hash($params['password'], PASSWORD_DEFAULT);
+        }
+
+        // users table uses "role", not "role_id"
+        $user->role = $params['role'] ?? 4;
+
         $user->save();
 
-        return self::getUserById($user->id);
+        return $user;
     }
 
     public static function updateUser($request)
     {
-        $id = (int)$request->getAttribute('id');
-        $params = $request->getParsedBody();
+        $params = $request->getParsedBody() ?? [];
+        $id = $request->getAttribute('id');
+
         $user = self::findOrFail($id);
 
-        foreach (['name', 'email', 'username', 'role_id'] as $field) {
+        foreach (['name', 'email', 'username', 'role'] as $field) {
             if (array_key_exists($field, $params)) {
                 $user->$field = $params[$field];
             }
@@ -62,14 +80,17 @@ class User extends Model
         }
 
         $user->save();
-        return self::getUserById($user->id);
+
+        return $user;
     }
 
     public static function deleteUser($request)
     {
-        $id = (int)$request->getAttribute('id');
+        $id = $request->getAttribute('id');
         $user = self::findOrFail($id);
-        return $user->delete();
+        $user->delete();
+
+        return $user;
     }
 
     public static function authenticateUser(string $username, string $password)
@@ -80,11 +101,37 @@ class User extends Model
             return false;
         }
 
-        return password_verify($password, $user->password) ? $user : false;
+        if (!password_verify($password, $user->password)) {
+            return false;
+        }
+
+        return $user;
     }
 
-    public function role()
+    public static function generateJWT(int $user_id): string
     {
-        return $this->belongsTo(Role::class, 'role_id');
+        $secret = self::getJwtSecret();
+
+        $payload = [
+            'iss' => 'courseProj Hotel Booking API',
+            'aud' => 'courseProj API Client',
+            'iat' => time(),
+            'exp' => time() + 3600,
+            'user_id' => $user_id
+        ];
+
+        return JWT::encode($payload, $secret, 'HS256');
+    }
+
+    public static function validateJWT(string $token)
+    {
+        $secret = self::getJwtSecret();
+
+        return JWT::decode($token, new Key($secret, 'HS256'));
+    }
+
+    private static function getJwtSecret(): string
+    {
+        return 'courseProjHotelBookingSecretKey2026Lab4AuthenticationSecureKey';
     }
 }

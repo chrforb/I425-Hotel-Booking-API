@@ -21,30 +21,12 @@ class BookingController
         $results = Booking::getBookingById($id);
         return Helper::withJson($response, $results, 200);
     }
-    public function delete($request, $response, $args)
-    {
-        $booking = Booking::find($args['id']);
 
-        if (!$booking) {
-            return $response->withJson([
-                "message" => "Booking not found"
-            ], 404);
-        }
+    public function viewAmenities(Request $request, Response $response, array $args): Response {
+        $id = (int)$args['id'];
 
-        $booking->delete();
+        $results = Booking::getAmenitiesByBooking($id);
 
-        return $response->withJson([
-            "message" => "Booking deleted successfully"
-        ], 200);
-    }
-    public function search($request, $response, $args)
-    {
-        $search = $request->getQueryParam('search');
-
-        $keywords = explode(' ', $search);
-
-        $bookings = Booking::search($keywords);
-
-        return $response->withJson($bookings, 200);
+        return Helper::withJson($response, $results, 200);
     }
 }
